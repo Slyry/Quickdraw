@@ -28,7 +28,7 @@ public class PlayerGunControls : MonoBehaviour
     [SerializeField]
     AudioClip shootingSound;
     [SerializeField]
-    AudioSource[] shootingAudio;
+    AudioSource shootingAudio;
     float hammerReset = 0;
 	// Use this for initialization
 	void Start ()
@@ -69,8 +69,8 @@ public class PlayerGunControls : MonoBehaviour
                     {
                         Debug.Log("Fire Gun");
 
-                        audio.clip = shootingSound;
-                        audio.Play();
+                        shootingAudio.clip = shootingSound;
+                        shootingAudio.Play();
                         
                         gunAnimator.SetTrigger("wasFired");
 
@@ -88,8 +88,8 @@ public class PlayerGunControls : MonoBehaviour
                 }
                 else if (hammerReset == 1 && !wasFired)
                 {
-                    audio.clip = shootingSound;
-                    audio.Play();
+                    shootingAudio.clip = shootingSound;
+                    shootingAudio.Play();
                     Debug.Log("Fire Gun");
                     if (playerAimInformation.HasPlayerInCrossHairs)
                     {
@@ -151,8 +151,8 @@ public class PlayerGunControls : MonoBehaviour
         yield return new WaitForSeconds(.5f);
 
         Debug.Log("Fire Gun");
-        audio.clip = shootingSound;
-        audio.Play();
+        shootingAudio.clip = shootingSound;
+        shootingAudio.Play();
         if (playerAimInformation.PlayerInCrossHairs != null)
             playerAimInformation.PlayerInCrossHairs.GetComponentInChildren<PlayerHealth>().TakeDamage();
         isCocked = false;
