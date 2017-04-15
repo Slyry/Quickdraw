@@ -69,9 +69,13 @@ public class PlayerGunControls : MonoBehaviour
                     audio.clip = shootingSound;
                     audio.Play();
                     Debug.Log("Fire Gun");
-                    if (playerAimInformation.playerInCrossHairs != null)
-                        playerAimInformation.playerInCrossHairs.TakeDamage();
+                    if (playerAimInformation.HasPlayerInCrossHairs)
+                    {
+                        playerAimInformation.PlayerInCrossHairs.TakeDamage();
+                    }
+
                     bulletImages[Ammo - 1].enabled = false;
+                    
                     Ammo--;
                     isCocked = false;
                     wasFired = true;
@@ -127,8 +131,8 @@ public class PlayerGunControls : MonoBehaviour
         Debug.Log("Fire Gun");
         audio.clip = shootingSound;
         audio.Play();
-        if (playerAimInformation.playerInCrossHairs != null)
-            playerAimInformation.playerInCrossHairs.GetComponentInChildren<PlayerHealth>().TakeDamage();
+        if (playerAimInformation.PlayerInCrossHairs != null)
+            playerAimInformation.PlayerInCrossHairs.GetComponentInChildren<PlayerHealth>().TakeDamage();
         isCocked = false;
         wasFired = true;
         bulletImages[Ammo - 1].enabled = false;

@@ -32,9 +32,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     AudioClip hawkSound;
     [SerializeField]
-    AudioSource audio;
+    AudioSource mAudio;
     [SerializeField]
-    AudioSource audio2;
+    AudioSource mAudio2;
     // Use this for initialization
     void Start ()
     {
@@ -99,10 +99,10 @@ public class GameManager : MonoBehaviour
 
 
                 GameState = "Shooting";
-                audio.clip = clockStrikes12;
-                audio.Play();
-                audio2.clip = hawkSound;
-                audio2.Play();
+                mAudio.clip = clockStrikes12;
+                mAudio.Play();
+                mAudio2.clip = hawkSound;
+                mAudio2.Play();
             }
             if (GameState == "Shooting")
             {
