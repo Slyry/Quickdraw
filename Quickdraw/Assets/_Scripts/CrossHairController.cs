@@ -43,8 +43,8 @@ public class CrossHairController : MonoBehaviour
 
     void HandleInput()
     {
-        float horizontalInput = CrossPlatformInputManager.GetAxis("Xaxis" + playerNumber);
-        float verticalInput = CrossPlatformInputManager.GetAxis("Yaxis" + playerNumber);
+        float horizontalInput = CrossPlatformInputManager.GetAxis("CrosshairXAxis" + playerNumber);
+        float verticalInput = CrossPlatformInputManager.GetAxis("CrosshairYAxis" + playerNumber);
 
         float horizontalPosition = crossHair.localPosition.x;
         float verticalPosition = crossHair.localPosition.y;
