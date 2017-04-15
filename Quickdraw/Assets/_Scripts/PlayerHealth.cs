@@ -9,6 +9,9 @@ public class PlayerHealth : MonoBehaviour
     public GameObject PlayerController;
     public FirstPersonController FPSController;
     private Rigidbody playerRigidbody;
+    [SerializeField]
+    CrossHairController crossHairController;
+    float pokeForce = 10f;
 
 	// Use this for initialization
 	void Start ()
@@ -26,9 +29,11 @@ public class PlayerHealth : MonoBehaviour
             FPSController.enabled = false;
             //PlayerController.SetActive(false);
             playerRigidbody.isKinematic = false;
-            playerRigidbody.AddForce(Physics.gravity * playerRigidbody.mass);
+            playerRigidbody.useGravity = true;
+            playerRigidbody.AddForce(Physics.gravity * playerRigidbody.mass * 10f);
             PlayerController.GetComponent<CharacterController>().enabled = false;
-            
+            crossHairController.GetImmediateRaycastInfo();
+            playerRigidbody.AddForceAtPosition(crossHairController.RayDirection * pokeForce, crossHairController.RayHitPoint);
         }
 	}
 

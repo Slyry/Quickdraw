@@ -15,6 +15,18 @@ public class CrossHairController : MonoBehaviour
     Camera playerCamera;
     Image crossHairImage;
 
+    Ray ray;
+    Vector3 rayDirection;
+    public Vector3 RayDirection
+    {
+        get { return rayDirection; }
+    }
+    Vector3 rayHitPoint;
+    public Vector3 RayHitPoint
+    {
+        get { return rayHitPoint; }
+    }
+
     bool hasPlayerInCrossHairs = false;
     public bool HasPlayerInCrossHairs
     {
@@ -24,6 +36,11 @@ public class CrossHairController : MonoBehaviour
     public PlayerHealth PlayerInCrossHairs
     {
         get { return playerInCrossHairs; }
+    }
+    Vector3 hitPoint;
+    public Vector3 HitPoint
+    {
+        get { return hitPoint; }
     }
 
     Vector3 crossHairStart = new Vector3(0f, 0f, 0f);
@@ -85,15 +102,16 @@ public class CrossHairController : MonoBehaviour
             crossHair.localPosition = new Vector3(490f, crossHair.localPosition.y, 0f);
 
 
-        RaycastHit hit;
+        RaycastHit hit = GetImmediateRaycastInfo();
 
-        if (Physics.Raycast(playerCamera.transform.position, crossHair.position - playerCamera.transform.position, out hit))
-        {
+        //if (Physics.Raycast(playerCamera.transform.position, crossHair.position - playerCamera.transform.position, out hit))
+        //{
             if (hit.transform.tag == "Player")
             {
                 hasPlayerInCrossHairs = true;
                 playerInCrossHairs = hit.transform.GetComponentInChildren<PlayerHealth>();
-                Debug.Log(playerInCrossHairs.name);
+                //Debug.Log(playerInCrossHairs.name);
+                //Debug.Log(playerInCrossHairs.transform.parent.name);
             }
             else if (hit.transform.tag == "Hat")
             {
@@ -108,6 +126,21 @@ public class CrossHairController : MonoBehaviour
                 playerInCrossHairs = null;
                 hasPlayerInCrossHairs = false;
             }
+        //}
+    }
+
+    public RaycastHit GetImmediateRaycastInfo()
+    {
+        RaycastHit hit;
+        Ray ray = new Ray(playerCamera.transform.position, crossHair.position - playerCamera.transform.position);
+
+        Physics.Raycast(playerCamera.transform.position, crossHair.position - playerCamera.transform.position, out hit);
+        if (hit.transform.tag == "Player")
+        {
+            rayHitPoint = hit.point;
+            rayDirection = ray.direction;
         }
+
+        return hit;
     }
 }

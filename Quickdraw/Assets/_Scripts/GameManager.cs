@@ -9,13 +9,17 @@ public class GameManager : MonoBehaviour
     public bool ShouldQuit = false;
     public string GameState;
     GameObject crossHair;
-    
+
     [SerializeField]
     GameObject minuteHand;
     [SerializeField]
     Transform startMinuteRotation;
     [SerializeField]
-    FirstPersonController[] playersFPSControllers;    
+    FirstPersonController[] playersFPSControllers;
+    [SerializeField]
+    PlayerHealth[] playerHealth;
+    [SerializeField]
+    GameObject playerWonPanel;
 
     float lastMinute;
 
@@ -35,19 +39,21 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     AudioSource mAudio2;
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         GameState = "Movement";
         StartCoroutine(SwitchBetweenGameStates());
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
         if (GameState == "Movement")
         {
             StartCoroutine(UpdateMinuteArm());
         }
+
+        CheckForDeadPlayers();
     }
 
     void StopClockCoroutines()
@@ -59,13 +65,13 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("Game");
     }
-    
+
     IEnumerator UpdateMinuteArm()
     {
         if (lastMinute != System.DateTime.Now.Second || lastMinute == -1)
         {
 
-            minuteHand.transform.localRotation = Quaternion.Euler( 0, 0, - ((System.DateTime.Now.Second - startTime) / 12f) * 360f + 134.1f);
+            minuteHand.transform.localRotation = Quaternion.Euler(0, 0, -((System.DateTime.Now.Second - startTime) / 12f) * 360f + 134.1f);
             lastMinute = System.DateTime.Now.Second;
 
         }
@@ -78,13 +84,14 @@ public class GameManager : MonoBehaviour
         {
             if (GameState == "Movement")
             {
+                playerWonPanel.SetActive(false);
                 minuteHand.transform.localRotation = startMinuteRotation.rotation;
                 startTime = System.DateTime.Now.Second;
                 lastMinute = -1f;
 
                 yield return new WaitForSeconds(movementTime);
 
-                foreach(FirstPersonController FPSCont in playersFPSControllers)
+                foreach (FirstPersonController FPSCont in playersFPSControllers)
                 {
                     FPSCont.enabled = false;
                 }
@@ -125,6 +132,29 @@ public class GameManager : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    void CheckForDeadPlayers()
+    {
+        int numOfDeadPlayers = 0;
+
+        foreach (PlayerHealth pHealth in playerHealth)
+        {
+            if (pHealth.Health <= 0)
+                numOfDeadPlayers++;
+        }
+
+        if (numOfDeadPlayers >= playerHealth.Length - 1)
+        {
+            playerWonPanel.SetActive(true);
+            //TODO: Inform player that won
+            //TODO: Reset players if this isn't the final win this game
+        }
+    }
+
+    void ResetRound()
+    {
+
     }
     
 }
