@@ -14,12 +14,12 @@ public class CrossHairController : MonoBehaviour
     [SerializeField]
     Camera playerCamera;
 
-    public Transform playerInCrossHairs;
-    Vector2 offSetReset = new Vector2( 0f, 0f );
+    Vector3 crossHairStart = new Vector3(0f, 0f, 0f);
+    public PlayerHealth playerInCrossHairs;
 	// Use this for initialization
 	void Start ()
     {
-
+        crossHairStart = crossHair.localPosition;
 	}
 	
 	// Update is called once per frame
@@ -36,38 +36,52 @@ public class CrossHairController : MonoBehaviour
         }
         else
         {
-            crossHair.offsetMin = offSetReset;
-            crossHair.offsetMax = offSetReset;
+            crossHair.localPosition = crossHairStart;
         }
             
     }
 
     void HandleInput()
     {
-        float horizontalInput = Input.GetAxis("CrosshairXAxis" + playerNumber);
-        float verticalInput = Input.GetAxis("CrosshairYAxis" + playerNumber);
+        float horizontalInput = CrossPlatformInputManager.GetAxis("CrosshairXAxis" + playerNumber);
+        float verticalInput = CrossPlatformInputManager.GetAxis("CrosshairYAxis" + playerNumber);
 
-        float horizontalPosition = crossHair.position.x;
-        float verticalPosition = crossHair.position.y;
+        float horizontalPosition = crossHair.localPosition.x;
+        float verticalPosition = crossHair.localPosition.y;
 
         float speed = 7f;
-        Debug.Log(crossHair.position.x);
 
-        crossHair.position = new Vector3(horizontalPosition + (horizontalInput * speed), verticalPosition + (verticalInput * speed), 0f);
-        
+        float xDistanceAttempt = Mathf.Abs(Mathf.Abs(horizontalPosition + (horizontalInput * speed)) - crossHairStart.x); 
+        float yDistanceAttempt = Mathf.Abs(Mathf.Abs(verticalPosition + (verticalInput * speed)) - crossHairStart.y);
+
+        //Debug.Log(crossHair.localPosition.x);
+
+        if (xDistanceAttempt < 350 && yDistanceAttempt < 200)
+            crossHair.localPosition = new Vector3(horizontalPosition + (horizontalInput * speed), verticalPosition + (verticalInput * speed), 0f);
+
+        if (crossHair.localPosition.y <= 0f)
+            crossHair.localPosition = new Vector3(crossHair.localPosition.x, 0f, 0f);
+        else if (crossHair.localPosition.y >= 360)
+            crossHair.localPosition = new Vector3(crossHair.localPosition.x, 360f, 0f);
+
+        if (crossHair.localPosition.x <= 0f)
+            crossHair.localPosition = new Vector3(0f, crossHair.localPosition.y, 0f);
+        else if
+            (crossHair.localPosition.x >= 640f)
+            crossHair.localPosition = new Vector3(640f, crossHair.localPosition.y, 0f);
+
 
         RaycastHit hit;
-        Ray ray = playerCamera.ScreenPointToRay(crossHair.position);
 
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(playerCamera.transform.position, crossHair.position - playerCamera.transform.position, out hit))
         {
             if (hit.transform.tag == "Player")
             {
-                playerInCrossHairs = hit.transform;
+                playerInCrossHairs = hit.transform.parent.GetComponent<PlayerHealth>();
                 Debug.Log(playerInCrossHairs.name);
-                //Debug.Log("Parent " + playerInCrossHairs.Health);
-                //Debug.Log("Parent " + playerInCrossHairs.PlayerController);
             }
+            else
+                playerInCrossHairs = null;
         }
     }
 }

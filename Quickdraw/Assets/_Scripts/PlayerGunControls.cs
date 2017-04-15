@@ -70,7 +70,7 @@ public class PlayerGunControls : MonoBehaviour
                     audio.Play();
                     Debug.Log("Fire Gun");
                     if (playerAimInformation.playerInCrossHairs != null)
-                        playerAimInformation.playerInCrossHairs.GetComponentInChildren<PlayerHealth>().TakeDamage();
+                        playerAimInformation.playerInCrossHairs.TakeDamage();
                     bulletImages[Ammo - 1].enabled = false;
                     Ammo--;
                     isCocked = false;

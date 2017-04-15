@@ -9,13 +9,9 @@ public class GameManager : MonoBehaviour
     public bool ShouldQuit = false;
     public string GameState;
     GameObject crossHair;
-
-    [SerializeField]
-    GameObject hourHand;
+    
     [SerializeField]
     GameObject minuteHand;
-    [SerializeField]
-    Transform startHourRotation;
     [SerializeField]
     Transform startMinuteRotation;
     [SerializeField]
@@ -27,9 +23,9 @@ public class GameManager : MonoBehaviour
     float startTime;
     float speed = .1f;
     float slerpTime = 60f;
-    float transitionTime = 3f;
-    float movementTime = 12f;
-    float shootingTime = 5f;
+    float transitionTime = 1f;
+    float movementTime = 1f;
+    float shootingTime = 10f;
 
     [SerializeField]
     AudioClip clockStrikes12;
@@ -52,14 +48,12 @@ public class GameManager : MonoBehaviour
         if (GameState == "Movement")
         {
             StartCoroutine(UpdateMinuteArm());
-            StartCoroutine(UpdateHourArm());
         }
     }
 
     void StopClockCoroutines()
     {
         StopCoroutine(UpdateMinuteArm());
-        StopCoroutine(UpdateHourArm());
     }
 
     void RestartScene()
@@ -79,25 +73,12 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator UpdateHourArm()
-    {
-        if (lastHour != System.DateTime.Now.Second || lastHour == -1)
-        {
-
-            hourHand.transform.localRotation = Quaternion.Euler(0, 0, - (Mathf.Abs((System.DateTime.Now.Second - startTime)) / 150f) * 360f + 30.2f);
-            lastHour = System.DateTime.Now.Second;
-
-        }
-        yield return null;
-    }
-
     IEnumerator SwitchBetweenGameStates()
     {
         while (!ShouldQuit)
         {
             if (GameState == "Movement")
             {
-                hourHand.transform.localRotation = startHourRotation.rotation;
                 minuteHand.transform.localRotation = startMinuteRotation.rotation;
                 startTime = System.DateTime.Now.Second;
                 lastMinute = -1f;
