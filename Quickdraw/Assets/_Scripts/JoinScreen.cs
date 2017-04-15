@@ -9,6 +9,8 @@ public class JoinScreen : MonoBehaviour
     [SerializeField]
     GameObject playerReadyPanel;
 
+    public bool isReady;
+    public int playersReady = 0;
 	// Use this for initialization
 	void Start ()
     {
@@ -22,6 +24,10 @@ public class JoinScreen : MonoBehaviour
         {
             playerReadyPanel.SetActive(true);
         }
-	
 	}
+
+    private void CheckIfReady()
+    {
+
+    }
 }

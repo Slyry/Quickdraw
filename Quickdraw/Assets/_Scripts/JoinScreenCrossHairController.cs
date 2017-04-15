@@ -11,13 +11,89 @@ public class JoinScreenCrossHairController : MonoBehaviour
     RectTransform crossHair;
     [SerializeField]
     Camera mainCamera;
+    [SerializeField]
+    JoinScreen joinScreen;
 
     Vector3 crossHairStart = new Vector3(0f, 0f, 0f);
     public Transform ReadyTargetUI;
+    string FireInput;
+    string HammerAxisInput;
+    float hammerReset = 0;
+    bool isCocked;
+    bool wasFired = true;
+    bool isShootingCoroutineRunning;
+    bool isOnTarget = false;
+    public int Ammo;
 
     void Start()
     {
         crossHairStart = crossHair.localPosition;
+        //joinScreen = gameObject.GetComponent<JoinScreen>();
+        FireInput = "Fire" + playerNumber;
+        HammerAxisInput = "Vertical" + playerNumber;
+    }
+
+    void Update()
+    {
+        if (Input.GetAxis(HammerAxisInput) != 0 && hammerReset == 0)
+        {
+            hammerReset = 1;
+            if (!isCocked && wasFired)
+            {
+                isCocked = true;
+                wasFired = false;
+            }
+        }
+        else if (Input.GetAxis(HammerAxisInput) == 0)
+        {
+            hammerReset = 0;
+            isCocked = false;
+        }
+
+        if (Input.GetAxis(FireInput) != 0 && Ammo > 0)
+        {
+            if (!isCocked && !wasFired)
+            {
+                if (!isShootingCoroutineRunning)
+                    StartCoroutine(ShotDelayIfNotCocked());
+            }
+            else if (hammerReset == 1 && !wasFired)
+            {
+                //audio.clip = shootingSound;
+                //audio.Play();
+                Debug.Log("Fire Gun");
+                if (isOnTarget)
+                    joinScreen.isReady = true;
+                //bulletImages[Ammo - 1].enabled = false;
+                //Ammo--;
+                isCocked = false;
+                wasFired = true;
+            }
+        }
+        
+    }
+
+    IEnumerator ShotDelayIfNotCocked()
+    {
+        isShootingCoroutineRunning = true;
+
+        yield return new WaitForSeconds(.5f);
+
+        Debug.Log("Fire Gun");
+        //audio.clip = shootingSound;
+        //audio.Play();
+        if (ReadyTargetUI != null)
+            joinScreen.isReady = true;
+        isCocked = false;
+        wasFired = true;
+        if(isOnTarget)
+        {
+            joinScreen.isReady = true;
+        }
+        //bulletImages[Ammo - 1].enabled = false;
+        //bulletImages[Ammo - 1].color = new Color(bulletImages[Ammo - 1].color.r, bulletImages[Ammo - 1].color.g, bulletImages[Ammo - 1].color.b, 50f);
+        //Ammo--;
+        isShootingCoroutineRunning = false;
     }
 
     void FixedUpdate()
@@ -33,7 +109,7 @@ public class JoinScreenCrossHairController : MonoBehaviour
         float horizontalPosition = crossHair.localPosition.x;
         float verticalPosition = crossHair.localPosition.y;
 
-        float speed = 7f;
+        float speed = 10f;
         Debug.Log(crossHair.position.x);
 
         float xDistanceAttempt = Mathf.Abs(Mathf.Abs(horizontalPosition + (horizontalInput * speed)) - crossHairStart.x);
@@ -61,15 +137,19 @@ public class JoinScreenCrossHairController : MonoBehaviour
         RaycastHit hit;
         Ray ray = mainCamera.ScreenPointToRay(crossHair.position);
 
-        //if (Physics.Raycast(ray, out hit))
-        //{
-        //    if (hit.transform.tag == "Player")
-        //    {
-        //        playerInCrossHairs = hit.transform;
-        //        Debug.Log(playerInCrossHairs.name);
-        //        //Debug.Log("Parent " + playerInCrossHairs.Health);
-        //        //Debug.Log("Parent " + playerInCrossHairs.PlayerController);
-        //    }
-        //}
+        if (Physics.Raycast(mainCamera.transform.position, crossHair.position - mainCamera.transform.position, out hit))
+        {
+            if (hit.transform.tag == "Target")
+            {
+                isOnTarget = true;
+                ReadyTargetUI = hit.transform;
+                Debug.Log(ReadyTargetUI.name);
+                //Debug.Log("Parent " + playerInCrossHairs.Health);
+                //Debug.Log("Parent " + playerInCrossHairs.PlayerController);
+            }
+            else
+                isOnTarget = false;
+            }
+        }
+        
     }
-}
