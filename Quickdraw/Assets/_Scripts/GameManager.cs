@@ -15,10 +15,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Transform startMinuteRotation;
     [SerializeField]
-    FirstPersonController[] playersFPSControllers;
+    FirstPersonController[] playersFPSControllers;    
 
     float lastMinute;
-    float lastHour;
 
     float startTime;
     float speed = .1f;
@@ -32,9 +31,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     AudioClip hawkSound;
     [SerializeField]
-    AudioSource audio;
+    AudioSource mAudio;
     [SerializeField]
-    AudioSource audio2;
+    AudioSource mAudio2;
     // Use this for initialization
     void Start ()
     {
@@ -82,7 +81,7 @@ public class GameManager : MonoBehaviour
                 minuteHand.transform.localRotation = startMinuteRotation.rotation;
                 startTime = System.DateTime.Now.Second;
                 lastMinute = -1f;
-                lastHour = -1f;
+
                 yield return new WaitForSeconds(movementTime);
 
                 foreach(FirstPersonController FPSCont in playersFPSControllers)
@@ -99,10 +98,10 @@ public class GameManager : MonoBehaviour
 
 
                 GameState = "Shooting";
-                audio.clip = clockStrikes12;
-                audio.Play();
-                audio2.clip = hawkSound;
-                audio2.Play();
+                mAudio.clip = clockStrikes12;
+                //mAudio.Play();
+                mAudio2.clip = hawkSound;
+                //mAudio2.Play();
             }
             if (GameState == "Shooting")
             {

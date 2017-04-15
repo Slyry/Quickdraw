@@ -23,11 +23,12 @@ public class PlayerGunControls : MonoBehaviour
     GameManager gameManager;
     [SerializeField]
     CrossHairController playerAimInformation;
-
+    [SerializeField]
+    Animator gunAnimator;
     [SerializeField]
     AudioClip shootingSound;
     [SerializeField]
-    AudioSource audio;
+    AudioSource[] shootingAudio;
     float hammerReset = 0;
 	// Use this for initialization
 	void Start ()
@@ -57,21 +58,46 @@ public class PlayerGunControls : MonoBehaviour
 
         if (gameManager.GameState == "Shooting")
         {
+            if (Input.GetAxis(FireInput) == 0)
+                wasFired = false;
+
             if (Input.GetAxis(FireInput) != 0 && Ammo > 0)
             {
                 if (!isCocked && !wasFired)
                 {
-                    if (!isShootingCoroutineRunning)
-                        StartCoroutine(ShotDelayIfNotCocked());
+                    if (true) //this is firing if the player hasn't "cocked" their gun.
+                    {
+                        Debug.Log("Fire Gun");
+
+                        audio.clip = shootingSound;
+                        audio.Play();
+                        
+                        gunAnimator.SetTrigger("wasFired");
+
+                        if (playerAimInformation.HasPlayerInCrossHairs)
+                            playerAimInformation.PlayerInCrossHairs.GetComponentInChildren<PlayerHealth>().TakeDamage();
+
+                        isCocked = false;
+                        wasFired = true;
+                        bulletImages[Ammo - 1].enabled = false;
+                        //bulletImages[Ammo - 1].color = new Color(bulletImages[Ammo - 1].color.r, bulletImages[Ammo - 1].color.g, bulletImages[Ammo - 1].color.b, 50f);
+                        Ammo--;
+                    }
+                    //if (!isShootingCoroutineRunning)
+                    //    StartCoroutine(ShotDelayIfNotCocked());
                 }
                 else if (hammerReset == 1 && !wasFired)
                 {
                     audio.clip = shootingSound;
                     audio.Play();
                     Debug.Log("Fire Gun");
-                    if (playerAimInformation.playerInCrossHairs != null)
-                        playerAimInformation.playerInCrossHairs.TakeDamage();
+                    if (playerAimInformation.HasPlayerInCrossHairs)
+                    {
+                        playerAimInformation.PlayerInCrossHairs.TakeDamage();
+                    }
+
                     bulletImages[Ammo - 1].enabled = false;
+                    
                     Ammo--;
                     isCocked = false;
                     wasFired = true;
@@ -127,8 +153,8 @@ public class PlayerGunControls : MonoBehaviour
         Debug.Log("Fire Gun");
         audio.clip = shootingSound;
         audio.Play();
-        if (playerAimInformation.playerInCrossHairs != null)
-            playerAimInformation.playerInCrossHairs.GetComponentInChildren<PlayerHealth>().TakeDamage();
+        if (playerAimInformation.PlayerInCrossHairs != null)
+            playerAimInformation.PlayerInCrossHairs.GetComponentInChildren<PlayerHealth>().TakeDamage();
         isCocked = false;
         wasFired = true;
         bulletImages[Ammo - 1].enabled = false;
