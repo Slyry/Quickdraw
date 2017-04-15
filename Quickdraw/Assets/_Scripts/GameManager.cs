@@ -22,9 +22,9 @@ public class GameManager : MonoBehaviour
     float startTime;
     float speed = .1f;
     float slerpTime = 60f;
-    float transitionTime = 1f;
-    float movementTime = 1f;
-    float shootingTime = 10f;
+    [SerializeField] float transitionTime = 1f;
+    [SerializeField] float movementTime = 1f;
+    [SerializeField] float shootingTime = 10f;
 
     [SerializeField]
     AudioClip clockStrikes12;
