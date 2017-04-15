@@ -18,7 +18,7 @@ public class JoinScreen : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if(Input.GetButtonDown("Jump" + playerNumber))
+        if(Input.GetButtonDown("JoinButton" + playerNumber))
         {
             playerReadyPanel.SetActive(true);
         }
