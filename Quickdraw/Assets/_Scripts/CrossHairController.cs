@@ -13,6 +13,7 @@ public class CrossHairController : MonoBehaviour
     GameManager gameManager;
     [SerializeField]
     Camera playerCamera;
+    Image crossHairImage;
 
     bool hasPlayerInCrossHairs = false;
     public bool HasPlayerInCrossHairs
@@ -30,6 +31,7 @@ public class CrossHairController : MonoBehaviour
     void Start ()
     {
         crossHairStart = crossHair.localPosition;
+        crossHairImage = GetComponent<Image>();
 	}
 	
 	// Update is called once per frame
@@ -42,11 +44,13 @@ public class CrossHairController : MonoBehaviour
     {
         if (gameManager.GameState == "Shooting")
         {
+            crossHairImage.enabled = true;
             HandleInput();
         }
         else
         {
             crossHair.localPosition = crossHairStart;
+            crossHairImage.enabled = false;
         }
             
     }

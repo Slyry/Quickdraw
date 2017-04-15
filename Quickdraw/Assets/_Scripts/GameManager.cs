@@ -15,10 +15,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Transform startMinuteRotation;
     [SerializeField]
-    FirstPersonController[] playersFPSControllers;
+    FirstPersonController[] playersFPSControllers;    
 
     float lastMinute;
-    float lastHour;
 
     float startTime;
     float speed = .1f;
@@ -82,7 +81,7 @@ public class GameManager : MonoBehaviour
                 minuteHand.transform.localRotation = startMinuteRotation.rotation;
                 startTime = System.DateTime.Now.Second;
                 lastMinute = -1f;
-                lastHour = -1f;
+
                 yield return new WaitForSeconds(movementTime);
 
                 foreach(FirstPersonController FPSCont in playersFPSControllers)
@@ -100,9 +99,9 @@ public class GameManager : MonoBehaviour
 
                 GameState = "Shooting";
                 mAudio.clip = clockStrikes12;
-                mAudio.Play();
+                //mAudio.Play();
                 mAudio2.clip = hawkSound;
-                mAudio2.Play();
+                //mAudio2.Play();
             }
             if (GameState == "Shooting")
             {
