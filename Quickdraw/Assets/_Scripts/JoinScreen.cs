@@ -8,12 +8,16 @@ public class JoinScreen : MonoBehaviour
     int playerNumber;
     [SerializeField]
     GameObject playerReadyPanel;
+    [SerializeField]
+    GameObject readyText;
 
+    public bool hasJoined;
     public bool isReady;
     public int playersReady = 0;
 	// Use this for initialization
 	void Start ()
     {
+        readyText.SetActive(false);
 	
 	}
 	
@@ -23,11 +27,30 @@ public class JoinScreen : MonoBehaviour
         if(Input.GetButtonDown("JoinButton" + playerNumber))
         {
             playerReadyPanel.SetActive(true);
+            hasJoined = true;
         }
+        if(Input.GetButtonDown("CancelButton" + playerNumber))
+        {
+            if(isReady)
+            {
+                isReady = false;
+                readyText.SetActive(false);
+            }
+            if(isReady == false && hasJoined)
+            {
+                hasJoined = false;
+                playerReadyPanel.SetActive(false);
+            }
+        }
+
+        CheckIfReady();
 	}
 
     private void CheckIfReady()
     {
-
+        if(isReady == true)
+        {
+            readyText.SetActive(true);
+        }
     }
 }
