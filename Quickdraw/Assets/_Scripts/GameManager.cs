@@ -9,36 +9,31 @@ public class GameManager : MonoBehaviour
     public bool ShouldQuit = false;
     public string GameState;
     GameObject crossHair;
-
-    [SerializeField]
-    GameObject hourHand;
+    
     [SerializeField]
     GameObject minuteHand;
     [SerializeField]
-    Transform startHourRotation;
-    [SerializeField]
     Transform startMinuteRotation;
     [SerializeField]
-    FirstPersonController[] playersFPSControllers;
+    FirstPersonController[] playersFPSControllers;    
 
     float lastMinute;
-    float lastHour;
 
     float startTime;
     float speed = .1f;
     float slerpTime = 60f;
-    float transitionTime = 3f;
-    float movementTime = 12f;
-    float shootingTime = 5f;
+    float transitionTime = 1f;
+    float movementTime = 1f;
+    float shootingTime = 10f;
 
     [SerializeField]
     AudioClip clockStrikes12;
     [SerializeField]
     AudioClip hawkSound;
     [SerializeField]
-    AudioSource audio;
+    AudioSource mAudio;
     [SerializeField]
-    AudioSource audio2;
+    AudioSource mAudio2;
     // Use this for initialization
     void Start ()
     {
@@ -52,14 +47,12 @@ public class GameManager : MonoBehaviour
         if (GameState == "Movement")
         {
             StartCoroutine(UpdateMinuteArm());
-            StartCoroutine(UpdateHourArm());
         }
     }
 
     void StopClockCoroutines()
     {
         StopCoroutine(UpdateMinuteArm());
-        StopCoroutine(UpdateHourArm());
     }
 
     void RestartScene()
@@ -79,29 +72,16 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator UpdateHourArm()
-    {
-        if (lastHour != System.DateTime.Now.Second || lastHour == -1)
-        {
-
-            hourHand.transform.localRotation = Quaternion.Euler(0, 0, - (Mathf.Abs((System.DateTime.Now.Second - startTime)) / 150f) * 360f + 30.2f);
-            lastHour = System.DateTime.Now.Second;
-
-        }
-        yield return null;
-    }
-
     IEnumerator SwitchBetweenGameStates()
     {
         while (!ShouldQuit)
         {
             if (GameState == "Movement")
             {
-                hourHand.transform.localRotation = startHourRotation.rotation;
                 minuteHand.transform.localRotation = startMinuteRotation.rotation;
                 startTime = System.DateTime.Now.Second;
                 lastMinute = -1f;
-                lastHour = -1f;
+
                 yield return new WaitForSeconds(movementTime);
 
                 foreach(FirstPersonController FPSCont in playersFPSControllers)
@@ -118,10 +98,10 @@ public class GameManager : MonoBehaviour
 
 
                 GameState = "Shooting";
-                audio.clip = clockStrikes12;
-                audio.Play();
-                audio2.clip = hawkSound;
-                audio2.Play();
+                mAudio.clip = clockStrikes12;
+                //mAudio.Play();
+                mAudio2.clip = hawkSound;
+                //mAudio2.Play();
             }
             if (GameState == "Shooting")
             {

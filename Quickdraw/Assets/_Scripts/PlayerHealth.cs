@@ -5,7 +5,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class PlayerHealth : MonoBehaviour
 {
 
-    public int Health = 2;
+    public int Health = 1;
     public GameObject PlayerController;
     public FirstPersonController FPSController;
 
@@ -22,7 +22,9 @@ public class PlayerHealth : MonoBehaviour
 	    if (Health <= 0)
         {
             FPSController.enabled = false;
-            PlayerController.SetActive(false);
+            //PlayerController.SetActive(false);
+            PlayerController.GetComponent<Rigidbody>().isKinematic = false;
+            PlayerController.GetComponent<CharacterController>().enabled = false;
         }
 	}
 
