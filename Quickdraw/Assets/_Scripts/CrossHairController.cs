@@ -13,25 +13,13 @@ public class CrossHairController : MonoBehaviour
     GameManager gameManager;
     [SerializeField]
     Camera playerCamera;
-    Image crossHairImage;
 
-    bool hasPlayerInCrossHairs = false;
-    public bool HasPlayerInCrossHairs
+    public Transform playerInCrossHairs;
+    Vector2 offSetReset = new Vector2( 0f, 0f );
+	// Use this for initialization
+	void Start ()
     {
-        get { return hasPlayerInCrossHairs; }
-    }
-    PlayerHealth playerInCrossHairs;
-    public PlayerHealth PlayerInCrossHairs
-    {
-        get { return playerInCrossHairs; }
-    }
 
-    Vector3 crossHairStart = new Vector3(0f, 0f, 0f);
-    // Use this for initialization
-    void Start ()
-    {
-        crossHairStart = crossHair.localPosition;
-        crossHairImage = GetComponent<Image>();
 	}
 	
 	// Update is called once per frame
@@ -44,69 +32,41 @@ public class CrossHairController : MonoBehaviour
     {
         if (gameManager.GameState == "Shooting")
         {
-            crossHairImage.enabled = true;
             HandleInput();
         }
         else
         {
-            crossHair.localPosition = crossHairStart;
-            crossHairImage.enabled = false;
+            crossHair.offsetMin = offSetReset;
+            crossHair.offsetMax = offSetReset;
         }
             
     }
 
     void HandleInput()
     {
-        float horizontalInput = CrossPlatformInputManager.GetAxis("CrosshairXAxis" + playerNumber);
-        float verticalInput = CrossPlatformInputManager.GetAxis("CrosshairYAxis" + playerNumber);
+        float horizontalInput = CrossPlatformInputManager.GetAxis("Xaxis" + playerNumber);
+        float verticalInput = CrossPlatformInputManager.GetAxis("Yaxis" + playerNumber);
 
-        float horizontalPosition = crossHair.localPosition.x;
-        float verticalPosition = crossHair.localPosition.y;
+        float horizontalPosition = crossHair.position.x;
+        float verticalPosition = crossHair.position.y;
 
-        float speed = 10f;
+        float speed = 7f;
+        Debug.Log(crossHair.position.x);
 
-        float xDistanceAttempt = Mathf.Abs(Mathf.Abs(horizontalPosition + (horizontalInput * speed)) - crossHairStart.x); 
-        float yDistanceAttempt = Mathf.Abs(Mathf.Abs(verticalPosition + (verticalInput * speed)) - crossHairStart.y);
-
-        //Debug.Log(crossHair.localPosition.x);
-
-        if (xDistanceAttempt < 550 && yDistanceAttempt < 400)
-            crossHair.localPosition = new Vector3(horizontalPosition + (horizontalInput * speed), verticalPosition + (verticalInput * speed), 0f);
-
-        if (crossHair.localPosition.y <= -275f)
-            crossHair.localPosition = new Vector3(crossHair.localPosition.x, -275f, 0f);
-        else if (crossHair.localPosition.y >= 275f)
-            crossHair.localPosition = new Vector3(crossHair.localPosition.x, 275f, 0f);
-
-        if (crossHair.localPosition.x <= -490f)
-            crossHair.localPosition = new Vector3(-490f, crossHair.localPosition.y, 0f);
-        else if
-            (crossHair.localPosition.x >= 490f)
-            crossHair.localPosition = new Vector3(490f, crossHair.localPosition.y, 0f);
-
+        crossHair.position = new Vector3(horizontalPosition + (horizontalInput * speed), verticalPosition + (verticalInput * speed), 0f);
+        
 
         RaycastHit hit;
+        Ray ray = playerCamera.ScreenPointToRay(crossHair.position);
 
-        if (Physics.Raycast(playerCamera.transform.position, crossHair.position - playerCamera.transform.position, out hit))
+        if (Physics.Raycast(ray, out hit))
         {
             if (hit.transform.tag == "Player")
             {
-                hasPlayerInCrossHairs = true;
-                playerInCrossHairs = hit.transform.GetComponentInChildren<PlayerHealth>();
+                playerInCrossHairs = hit.transform;
                 Debug.Log(playerInCrossHairs.name);
-            }
-            else if (hit.transform.tag == "Hat")
-            {
-                playerInCrossHairs = null;
-                hasPlayerInCrossHairs = false;
-
-                Debug.Log(hit.transform.GetComponent<HatController>());
-                hit.transform.GetComponent<HatController>().HatShotOff();
-            }
-            else
-            {
-                playerInCrossHairs = null;
-                hasPlayerInCrossHairs = false;
+                //Debug.Log("Parent " + playerInCrossHairs.Health);
+                //Debug.Log("Parent " + playerInCrossHairs.PlayerController);
             }
         }
     }

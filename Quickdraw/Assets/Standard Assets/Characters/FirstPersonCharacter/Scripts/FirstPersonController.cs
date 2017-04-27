@@ -206,7 +206,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void GetInput(out float speed)
         {
             // Read input
-            //float horizontal = CrossPlatformInputManager.GetAxis("StrafeXAxis" + playerNumber);
+            float horizontal = CrossPlatformInputManager.GetAxis("Horizontal" + playerNumber);
             float vertical = CrossPlatformInputManager.GetAxis("Vertical" + playerNumber);
 
             bool waswalking = m_IsWalking;
@@ -218,7 +218,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 #endif
             // set the desired speed to be walking or running
             speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
-            m_Input = new Vector2(0, vertical);
+            m_Input = new Vector2(horizontal, vertical);
 
             // normalize input if it exceeds 1 in combined length:
             if (m_Input.sqrMagnitude > 1)
