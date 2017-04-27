@@ -1,1 +1,2 @@
 # Quickdraw
+Spaghetti Western Game
